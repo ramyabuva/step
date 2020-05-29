@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Switches Light Mode of Page
  */
 function switchMode() {
   var style = document.getElementById("pagestyle").getAttribute("href");
@@ -24,13 +24,18 @@ function switchMode() {
       switchSheet("css/daymode.css")
       switchIcon("fas fa-moon")
   }
-  
 }
 
+/**
+ * Switches Stylesheet of the Page
+ */
 function switchSheet(mode) { 
     document.getElementById("pagestyle").setAttribute("href", mode);  
 }
 
+/**
+ * Changes icon for Light Mode button
+ */
 function switchIcon(icon) { 
     document.getElementById("modeicon").setAttribute("class", icon);  
 }
