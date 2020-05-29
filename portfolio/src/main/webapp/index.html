@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css">
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet">
+    <link href="css/daymode.css" rel="stylesheet">
   </head>
   <body id="page-top">
     <!-- Navigation-->
@@ -37,9 +38,12 @@
           <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#interests">Interests</a></li>
         </ul>
       </div>
+      <div class="social-icons">
+        <button class="social-icon" onclick="switchMode()"><i class="fas fa-adjust"></i></button>
+      </div>
     </nav>
     <!-- Page Content-->
-    <div class="container-fluid p-0">
+    <div class="container-fluid p-0 bg-mode">
       <!-- About-->
       <section class="resume-section" id="about">
         <div class="resume-section-content">
@@ -61,7 +65,7 @@
       <!-- Experience-->
       <section class="resume-section" id="experience">
         <div class="resume-section-content">
-          <h2 class="mb-5">Experience</h2>
+          <h2 class="mb-5 header-mode">Experience</h2>
           <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
             <div class="flex-grow-1">
               <h3 class="mb-0">STEP Intern</h3>
@@ -99,12 +103,14 @@
             <div class="flex-grow-1">
               <h3 class="mb-0">Computer Science Intern</h3>
               <div class="subheading mb-3">George Mason University</div>
-              <ul>
-                <li>Extracted emails from GitHub Repositories using its REST API to survey 
-                    programmers of what languages and IDEs were best suited to their needs</li>
-                <li>Designed features to help meet developer needs for debugging based
-                    based on codebase size, etc.</li>
-              </ul>
+              <div class="mb-5">
+                <ul>
+                  <li>Extracted emails from GitHub Repositories using its REST API to survey 
+                      programmers of what languages and IDEs were best suited to their needs</li>
+                  <li>Designed features to help meet developer needs for debugging based
+                      based on codebase size, etc.</li>
+                </ul>
+              </div>
             </div>
             <div class="flex-shrink-0"><span class="text-primary">June 2017 - August 2017</span></div>
           </div>
@@ -114,7 +120,7 @@
       <!-- Education-->
       <section class="resume-section" id="education">
         <div class="resume-section-content">
-          <h2 class="mb-5">Education</h2>
+          <h2 class="mb-5 header-mode">Education</h2>
           <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
             <div class="flex-grow-1">
               <h3 class="mb-0">University of Virginia</h3>
@@ -131,8 +137,10 @@
               <div class="flex-grow-1">
                  <h3 class="mb-0">Rock Ridge High School</h3>
                 <div class="subheading mb-3"> Advanced Studies Diploma</div>
-                <p>GPA: 4.54</p>
-                <p>Rank: 6/389 </p>
+                <div class="mb-5">
+                  <p>GPA: 4.54</p>
+                  <p>Rank: 6/389 </p>
+                </div>
               </div>
               <div class="flex-shrink-0"><span class="text-primary">August 2014 - June 2018</span></div>
           </div>
@@ -142,7 +150,7 @@
       <!-- Projects-->
       <section class="resume-section" id="projects">
         <div class="resume-section-content">
-          <h2 class="mb-5">Projects</h2>
+          <h2 class="mb-5 header-mode">Projects</h2>
           <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
             <div class="flex-grow-1">
               <h3 class="mb-0">Rideshare - HOOBER</h3>
@@ -157,11 +165,13 @@
           <div class="d-flex flex-column flex-md-row justify-content-between">
             <div class="flex-grow-1">
               <h3 class="mb-0">RecipEat - Fitness and Nutrition Application</h3>
-              <ul>
-                <li>Used Google FIT API and Android Studio to create an application that used 
-                        patterns in user habits to make suggestions about diet, exercise, and sleep</li>
-                <li>Created algorithm to make suggestions to users based on past data</li>
-              </ul>
+              <div class="mb-5">
+                <ul>
+                  <li>Used Google FIT API and Android Studio to create an application that used 
+                          patterns in user habits to make suggestions about diet, exercise, and sleep</li>
+                  <li>Created algorithm to make suggestions to users based on past data</li>
+                </ul>
+              </div>
             </div>
             <div class="flex-shrink-0"><span class="text-primary">August 2014 - June 2018</span></div>
           </div>
@@ -171,33 +181,36 @@
         <!-- Skills-->
         <section class="resume-section" id="skills">
           <div class="resume-section-content">
-            <h2 class="mb-5">Skills</h2>
+            <h2 class="mb-5 header-mode">Skills</h2>
             <div class="subheading mb-3">Programming Languages & Tools</div>
-            <ul>
-              <li>Java</li>
-              <li>Python</li>
-              <li>C++</li>
-              <li>Unix</li>
-              <li>Scikit-Learn</li>
-              <li>Tensorflow/Keras</li>
-              <li>AWS</li>
-              <li>Github</li>
-              <li>Matlab</li>
-              <li>HTML</li>
-              <li>Django</li>
-              <li>Bootstrap</li>
+            <div class="mb-5">
+              <ul>
+                <li>Java</li>
+                <li>Python</li>
+                <li>C++</li>
+                <li>Unix</li>
+                <li>Scikit-Learn</li>
+                <li>Tensorflow/Keras</li>
+                <li>AWS</li>
+                <li>Github</li>
+                <li>Matlab</li>
+                <li>HTML</li>
+                <li>Django</li>
+                <li>Bootstrap</li>
             </ul>
+            </div>
           </div>
         </section>
         <hr class="m-0">
         <!-- Interests-->
         <section class="resume-section" id="interests">
           <div class="resume-section-content">
-            <h2 class="mb-5">Interests</h2>
-            <div>In my free time, I enjoy singing, sewing, art, and
+            <h2 class="mb-5 header-mode">Interests</h2>
+            <div class = "mb-5">In my free time, I enjoy singing, sewing, art, and
                 playing with my dog. Some of my favorite shows are Avatar the Last Airbender, the Office,
                 Parks and Recreation, Silicon Valley, and New Girl. My favorite type of music is alternative 
                 R&B.</div>
+            <br>
             <center>
               <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="assets/img/nata.jpg" alt="" 
                   width = "30%">
@@ -212,5 +225,6 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
       <!-- Core theme JS-->
       <script src="js/scripts.js"></script>
+      <script src="script.js"></script>
     </body>
 </html>

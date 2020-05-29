@@ -1,0 +1,32 @@
+.mb-0 { 
+    color: #343a40;
+}
+
+.mb-3 { 
+    color: #343a40;
+}
+
+.mb-5 { 
+    color: #6c757d;
+}
+
+.bg-mode {
+    background-color: #ffffff !important;
+}
+
+.header-mode { 
+    color: #343a40;
+}
+
+.social-icons .social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.5rem;
+  width: 3.5rem;
+  background-color: #495057;
+  color: #fff;
+  border-radius: 100%;
+  font-size: 1.5rem;
+  margin-right: 1.5rem;
+}
