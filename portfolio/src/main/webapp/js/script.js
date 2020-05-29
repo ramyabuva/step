@@ -13,16 +13,29 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Switches Light Mode of Page
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function switchMode() {
+  var style = document.getElementById("pagestyle").getAttribute("href");
+  if (style == "") { 
+    switchSheet("css/nightmode.css");
+    switchIcon("fas fa-sun");
+  } else { 
+    switchSheet("");
+    switchIcon("fas fa-moon");
+  }
+}
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+/**
+ * Switches Stylesheet of the Page
+ */
+function switchSheet(mode) { 
+  document.getElementById("pagestyle").setAttribute("href", mode);  
+}
 
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+/**
+ * Changes icon for Light Mode button
+ */
+function switchIcon(icon) { 
+  document.getElementById("modeicon").setAttribute("class", icon);  
 }
