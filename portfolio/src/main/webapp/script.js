@@ -16,13 +16,21 @@
  * Adds a random greeting to the page.
  */
 function switchMode() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+  var style = document.getElementById("pagestyle").getAttribute("href");
+  if (style == "css/daymode.css") { 
+      switchSheet("css/nightmode.css")
+      switchIcon("fas fa-sun")
+  } else { 
+      switchSheet("css/daymode.css")
+      switchIcon("fas fa-moon")
+  }
+  
+}
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+function switchSheet(mode) { 
+    document.getElementById("pagestyle").setAttribute("href", mode);  
+}
 
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+function switchIcon(icon) { 
+    document.getElementById("modeicon").setAttribute("class", icon);  
 }
