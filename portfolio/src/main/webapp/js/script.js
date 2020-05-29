@@ -18,11 +18,11 @@
 function switchMode() {
   var style = document.getElementById("pagestyle").getAttribute("href");
   if (style == "css/daymode.css") { 
-      switchSheet("css/nightmode.css")
-      switchIcon("fas fa-sun")
+    switchSheet("css/nightmode.css");
+    switchIcon("fas fa-sun");
   } else { 
-      switchSheet("css/daymode.css")
-      switchIcon("fas fa-moon")
+    switchSheet("css/daymode.css");
+    switchIcon("fas fa-moon");
   }
 }
 
@@ -30,12 +30,12 @@ function switchMode() {
  * Switches Stylesheet of the Page
  */
 function switchSheet(mode) { 
-    document.getElementById("pagestyle").setAttribute("href", mode);  
+  document.getElementById("pagestyle").setAttribute("href", mode);  
 }
 
 /**
  * Changes icon for Light Mode button
  */
 function switchIcon(icon) { 
-    document.getElementById("modeicon").setAttribute("class", icon);  
+  document.getElementById("modeicon").setAttribute("class", icon);  
 }
