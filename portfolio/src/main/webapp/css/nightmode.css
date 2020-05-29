@@ -1,13 +1,13 @@
 .mb-0 { 
-  color: #ffffff;
+  color: #fff;
 }
 
 .mb-3 { 
-  color: #ffffff;
+  color: #fff;
 }
 
 .mb-5 { 
-  color: #ffffff;
+  color: #fff;
 }
 
 .bg-mode {
@@ -15,18 +15,10 @@
 }
 
 .header-mode { 
-  color: #ffffff;
+  color: #fff;
 }
 
 .social-icons .social-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 3.5rem;
-  width: 3.5rem;
   background-color: #fff;
   color: #343a40;
-  border-radius: 100%;
-  font-size: 1.5rem;
-  margin-right: 1.5rem;
 }

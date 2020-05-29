@@ -17,11 +17,11 @@
  */
 function switchMode() {
   var style = document.getElementById("pagestyle").getAttribute("href");
-  if (style == "css/daymode.css") { 
+  if (style == "") { 
     switchSheet("css/nightmode.css");
     switchIcon("fas fa-sun");
   } else { 
-    switchSheet("css/daymode.css");
+    switchSheet("");
     switchIcon("fas fa-moon");
   }
 }
