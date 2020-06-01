@@ -39,3 +39,12 @@ function switchSheet(mode) {
 function switchIcon(icon) { 
   document.getElementById("modeicon").setAttribute("class", icon);  
 }
+
+/**
+ * Display text from data Servlet
+ */
+async function getText() {
+  const response = await fetch('/data');
+  const message = await response.text();
+  document.getElementById('message-container').innerText = message;
+}
