@@ -45,6 +45,17 @@ function switchIcon(icon) {
  */
 async function getText() {
   const response = await fetch('/data');
-  const message = await response.text();
-  document.getElementById('message-container').innerText = message;
+  const messages = await response.json();
+  const messageContainer = document.getElementById('message-container');
+  messageContainer.innerHTML = '';
+  for (const message of messages) { 
+    messageContainer.appendChild(createListElement(message));
+  }
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
