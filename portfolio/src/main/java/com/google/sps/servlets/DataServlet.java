@@ -31,7 +31,6 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String messagesJson = convertToJson(messages);
-
     response.setContentType("text/html;");
     response.getWriter().println(messagesJson);
   }
@@ -39,23 +38,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
-    String comment = getParameter(request, "text-input", "");
-    messages.add(comment);
-    
+    String comment = request.getParameter("text-input");
+    if (!comment.isEmpty()){ 
+      messages.add(comment);
+    }
     response.sendRedirect("/#interests");
   }
 
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    if (value == null) {
-      return defaultValue;
-    }
-    return value;
-  }
 
   /**
    * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
