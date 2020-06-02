@@ -17,7 +17,7 @@
     <link href="" rel="stylesheet" id="pagestyle">
     <script src="js/script.js"></script>
   </head>
-  <body id="page-top">
+  <body id="page-top" onload="getText()">
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
       <a class="navbar-brand js-scroll-trigger" href="#page-top">
@@ -216,10 +216,14 @@
               <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="assets/img/nata.jpg" alt="" 
                   width="30%">
               <br>
-              <button onclick="getText()">Get Text!</button>
-              <br>
-              <div class="mb-5" id="message-container"></div>
             </center>
+            <form action="/data" method="POST">
+              <p>Comment:</p>
+              <textarea name="text-input" required></textarea>
+              <input type="submit"/>
+            </form>
+            <br>
+            <ul id="message-container"></ul>
           </div>
         </section>
       </div>
