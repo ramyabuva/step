@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
+
 
 /** Servlet that returns some example content.*/
 @WebServlet("/data")
@@ -43,10 +45,14 @@ public class DataServlet extends HttpServlet {
     int numComments;
     try{ 
       numComments = Integer.parseInt(strNumComments);
+      if(numComments < 0) {
+          throw new Exception();
+      }
     } catch (Exception e) { 
-      numComments = 10;
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
     }
-    
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
 
