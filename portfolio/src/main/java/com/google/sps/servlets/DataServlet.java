@@ -14,6 +14,13 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,30 +28,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.List;
 
 /** Servlet that returns some example content.*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private ArrayList<String> messages = new ArrayList<String>();
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String messagesJson = convertToJson(messages);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(10));
+
+    ArrayList<String> comments = new ArrayList<>();
+    for (Entity entity : results) {
+      comments.add((String) entity.getProperty("comment"));
+    }
+
     response.setContentType("text/html;");
-    response.getWriter().println(messagesJson);
+    response.getWriter().println(convertToJson(comments));
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
     String comment = request.getParameter("text-input");
+    long timestamp = System.currentTimeMillis();
+
     if (comment != null && !comment.isEmpty()){ 
-        messages.add(comment);
+      Entity taskEntity = new Entity("Comment");
+      taskEntity.setProperty("comment", comment);
+      taskEntity.setProperty("timestamp", timestamp);
+
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      datastore.put(taskEntity);
     }
     response.sendRedirect("/#interests");
   }
-
 
   /**
    * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
