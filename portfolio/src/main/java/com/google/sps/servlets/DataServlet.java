@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
+
 
 /** Servlet that returns some example content.*/
 @WebServlet("/data")
@@ -40,13 +42,9 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     String strNumComments = request.getParameter("numComments");
-    int numComments;
-    try{ 
-      numComments = Integer.parseInt(strNumComments);
-    } catch (Exception e) { 
-      numComments = 10;
-    }
-    
+    int numComments = Integer.parseInt(strNumComments);
+    numComments = Math.max(0,numComments);
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
 

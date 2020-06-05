@@ -16,13 +16,13 @@
  * Switches Light Mode of Page
  */
 function switchMode() {
-  var style = document.getElementById("pagestyle").getAttribute("href");
-  if (style == "") { 
-    switchSheet("css/nightmode.css");
-    switchIcon("fas fa-sun");
+  var style = document.getElementById('pagestyle').getAttribute('href');
+  if (style == '') { 
+    switchSheet('css/nightmode.css');
+    switchIcon('fas fa-sun');
   } else { 
-    switchSheet("");
-    switchIcon("fas fa-moon");
+    switchSheet('');
+    switchIcon('fas fa-moon');
   }
 }
 
@@ -30,18 +30,18 @@ function switchMode() {
  * Switches Stylesheet of the Page
  */
 function switchSheet(mode) { 
-  document.getElementById("pagestyle").setAttribute("href", mode);  
+  document.getElementById('pagestyle').setAttribute('href', mode);  
 }
 
 /**
  * Changes icon for Light Mode button
  */
 function switchIcon(icon) { 
-  document.getElementById("modeicon").setAttribute("class", icon);  
+  document.getElementById('modeicon').setAttribute('class', icon);  
 }
 
 /**
- * get Number of comments from data servlet
+ * Get number of comments from data servlet
  */
 async function getNumComments(numComments) {
   const response = await fetch('/data?numComments='.concat(numComments));
@@ -57,9 +57,8 @@ async function getNumComments(numComments) {
  * Display text from data Servlet
  */
 async function getText() {
-  var numComments = document.getElementById("number-comments");
-  numComments = numComments.options[numComments.selectedIndex].value;
-  getNumComments(numComments);
+  const numComments = document.getElementById('number-comments');
+  getNumComments(numComments.options[numComments.selectedIndex].value);
 }
 
 /** Creates an <li> element containing text. */
@@ -67,11 +66,11 @@ function createListElement(message) {
   const liElement = document.createElement('li');
   liElement.className = 'message';
   liElement.innerText = message.text;
-  liElement.setAttribute("class", "list-group-item");
+  liElement.setAttribute('class', 'list-group-item');
 
   const deleteButtonElement = document.createElement('button');
   deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
-  deleteButtonElement.setAttribute("class", "social-icon float-right");
+  deleteButtonElement.setAttribute('class', 'social-icon float-right');
   deleteButtonElement.addEventListener('click', () => {
     deleteComment(message);
 
