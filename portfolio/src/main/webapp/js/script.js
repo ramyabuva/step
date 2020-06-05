@@ -67,7 +67,7 @@ function createListElement(message) {
   const liElement = document.createElement('li');
   liElement.className = 'message';
   liElement.innerText = message.text;
-  liElement.setAttribute("class", "list-group-item")
+  liElement.setAttribute("class", "list-group-item");
 
   const deleteButtonElement = document.createElement('button');
   deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
