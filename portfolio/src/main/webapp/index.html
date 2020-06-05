@@ -217,6 +217,13 @@
                   width="30%">
               <br>
             </center>
+            <select name="number-comments" id="number-comments" onchange="getText()">
+              <option value="10" selected disabled hidden>Number of Comments to Display</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
             <form action="/data" method="POST">
               <p>Comment:</p>
               <textarea name="text-input" required></textarea>

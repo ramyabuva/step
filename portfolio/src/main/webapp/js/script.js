@@ -41,16 +41,25 @@ function switchIcon(icon) {
 }
 
 /**
- * Display text from data Servlet
+ * get Number of comments from data servlet
  */
-async function getText() {
-  const response = await fetch('/data');
+async function getNumComments(numComments) {
+  const response = await fetch('/data?numComments='.concat(numComments));
   const messages = await response.json();
   const messageContainer = document.getElementById('message-container');
   messageContainer.innerHTML = '';
   for (const message of messages) { 
     messageContainer.appendChild(createListElement(message));
   }
+}
+
+/**
+ * Display text from data Servlet
+ */
+async function getText() {
+  var numComments = document.getElementById("number-comments");
+  numComments = numComments.options[numComments.selectedIndex].value;
+  getNumComments(numComments);
 }
 
 /** Creates an <li> element containing text. */

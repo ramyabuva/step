@@ -38,8 +38,16 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
+    String strNumComments = request.getParameter("numComments");
+    int numComments;
+    try{ 
+      numComments = Integer.parseInt(strNumComments);
+    } catch (Exception e) { 
+      numComments = 10;
+    }
+    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(10));
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
 
     ArrayList<String> comments = new ArrayList<>();
     for (Entity entity : results) {
@@ -57,12 +65,12 @@ public class DataServlet extends HttpServlet {
     long timestamp = System.currentTimeMillis();
 
     if (comment != null && !comment.isEmpty()){ 
-      Entity taskEntity = new Entity("Comment");
-      taskEntity.setProperty("comment", comment);
-      taskEntity.setProperty("timestamp", timestamp);
+      Entity commentsEntity = new Entity("Comment");
+      commentsEntity.setProperty("comment", comment);
+      commentsEntity.setProperty("timestamp", timestamp);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(taskEntity);
+      datastore.put(commentsEntity);
     }
     response.sendRedirect("/#interests");
   }
