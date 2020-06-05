@@ -63,8 +63,27 @@ async function getText() {
 }
 
 /** Creates an <li> element containing text. */
-function createListElement(text) {
+function createListElement(message) {
   const liElement = document.createElement('li');
-  liElement.innerText = text;
+  liElement.className = 'message';
+  liElement.innerText = message.text;
+
+  const deleteButtonElement = document.createElement('button');
+  deleteButtonElement.innerText = 'Delete';
+  deleteButtonElement.addEventListener('click', () => {
+    deleteComment(message);
+
+    // Remove the comment from the DOM.
+    liElement.remove();
+  });
+
+  liElement.appendChild(deleteButtonElement);
   return liElement;
+}
+
+/** Tells the server to delete the comment. */
+function deleteComment(message) {
+  const params = new URLSearchParams();
+  params.append('id', message.id);
+  fetch('/delete-comment', {method: 'POST', body: params});
 }

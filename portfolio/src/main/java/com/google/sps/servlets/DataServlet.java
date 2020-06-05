@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,9 +50,11 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
 
-    ArrayList<String> comments = new ArrayList<>();
+    ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results) {
-      comments.add((String) entity.getProperty("comment"));
+      long id = entity.getKey().getId();
+      String text = (String) entity.getProperty("comment");
+      comments.add(new Comment(id, text));
     }
 
     response.setContentType("text/html;");
@@ -79,7 +82,7 @@ public class DataServlet extends HttpServlet {
    * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
    * the Gson library dependency to pom.xml.
    */
-  private String convertToJson(ArrayList<String> comments) {
+  private String convertToJson(ArrayList<Comment> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
