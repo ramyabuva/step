@@ -67,9 +67,11 @@ function createListElement(message) {
   const liElement = document.createElement('li');
   liElement.className = 'message';
   liElement.innerText = message.text;
+  liElement.setAttribute("class", "list-group-item")
 
   const deleteButtonElement = document.createElement('button');
-  deleteButtonElement.innerText = 'Delete';
+  deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
+  deleteButtonElement.setAttribute("class", "social-icon float-right");
   deleteButtonElement.addEventListener('click', () => {
     deleteComment(message);
 

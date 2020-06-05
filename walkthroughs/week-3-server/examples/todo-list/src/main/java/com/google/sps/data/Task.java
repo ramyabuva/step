@@ -15,7 +15,7 @@
 package com.google.sps.data;
 
 /** An item on a todo list. */
-public final class z {
+public final class Task {
 
   private final long id;
   private final String title;
