@@ -28,6 +28,7 @@ function switchMode() {
 
 /**
  * Switches Stylesheet of the Page
+ * @param {string} mode The path to the desired mode stylesheet.
  */
 function switchSheet(mode) { 
   document.getElementById('pagestyle').setAttribute('href', mode);  
@@ -35,6 +36,7 @@ function switchSheet(mode) {
 
 /**
  * Changes icon for Light Mode button
+ * @param {string} icon The string code for the fabulous fonts icon to display.
  */
 function switchIcon(icon) { 
   document.getElementById('modeicon').setAttribute('class', icon);  
@@ -42,6 +44,7 @@ function switchIcon(icon) {
 
 /**
  * Get number of comments from data servlet
+ * @param {string} numComments A string equivalent of the number of comments in datastore.
  */
 async function getNumComments(numComments) {
   const response = await fetch('/data?numComments='.concat(numComments));
@@ -61,7 +64,9 @@ async function getText() {
   getNumComments(numComments.options[numComments.selectedIndex].value);
 }
 
-/** Creates an <li> element containing text. */
+/** Creates an <li> element containing text.
+ * @param {string} message A Json string representing a single comment.
+ */
 function createListElement(message) {
   const liElement = document.createElement('li');
   liElement.className = 'message';
@@ -82,7 +87,10 @@ function createListElement(message) {
   return liElement;
 }
 
-/** Tells the server to delete the comment. */
+/** 
+ * Tells the server to delete the comment. 
+ * @param {string} message A Json string representing a single comment.
+*/
 function deleteComment(message) {
   const params = new URLSearchParams();
   params.append('id', message.id);
