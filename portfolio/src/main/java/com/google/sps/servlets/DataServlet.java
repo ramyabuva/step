@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.Math;
+import org.json.simple.JSONObject;
 
 
 /** Servlet that returns some example content.*/
@@ -46,9 +47,14 @@ public class DataServlet extends HttpServlet {
     try{ 
       numComments = Integer.parseInt(strNumComments);
       if(numComments < 0) {
-          throw new Exception();
+          throw new Exception("Invalid number of comments.");
       }
     } catch (Exception e) { 
+      JSONObject errMessage = new JSONObject();
+      errMessage.put("message", "Invalid number of comments");
+      JSONObject err = new JSONObject();
+      err.put("error",errMessage);
+      response.getWriter().println(errMessage);
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }

@@ -47,7 +47,7 @@ function switchIcon(icon) {
  * @param {string} numComments A string equivalent of the number of comments in datastore.
  */
 async function getNumComments(numComments) {
-  const response = await fetch('/data?numComments='.concat(numComments));
+  const response = await fetch(`/data?numComments=${numComments}`);
   const messages = await response.json();
   const messageContainer = document.getElementById('message-container');
   messageContainer.innerHTML = '';
@@ -65,7 +65,7 @@ async function getText() {
 }
 
 /** Creates an <li> element containing text.
- * @param {string} message A Json string representing a single comment.
+ * @param {JSON Object} message A JSON object representing a single comment.
  */
 function createListElement(message) {
   const liElement = document.createElement('li');
@@ -89,7 +89,7 @@ function createListElement(message) {
 
 /** 
  * Tells the server to delete the comment. 
- * @param {string} message A Json string representing a single comment.
+ * @param {JSON Object} message A JSON object representing a single comment.
 */
 function deleteComment(message) {
   const params = new URLSearchParams();
