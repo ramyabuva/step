@@ -46,7 +46,7 @@ public class DataServlet extends HttpServlet {
     int numComments;
     try{ 
       numComments = Integer.parseInt(strNumComments);
-      if(numComments < 0) {
+      if(numComments <= 0) {
           throw new Exception("Invalid number of comments.");
       }
     } catch (Exception e) { 
