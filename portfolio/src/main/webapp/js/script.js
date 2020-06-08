@@ -65,7 +65,7 @@ async function getText() {
 }
 
 /** Creates an <li> element containing text.
- * @param {JSON Object} message A JSON object representing a single comment.
+ * @param {Object} message A JSON object representing a single comment.
  */
 function createListElement(message) {
   const liElement = document.createElement('li');
@@ -89,7 +89,7 @@ function createListElement(message) {
 
 /** 
  * Tells the server to delete the comment. 
- * @param {JSON Object} message A JSON object representing a single comment.
+ * @param {Object} message A JSON object representing a single comment.
 */
 function deleteComment(message) {
   const params = new URLSearchParams();
