@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
+import org.json.simple.JSONObject;
+
 
 /** Servlet that returns some example content.*/
 @WebServlet("/data")
@@ -38,12 +42,31 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(10));
+    String strNumComments = request.getParameter("numComments");
+    int numComments;
+    try{ 
+      numComments = Integer.parseInt(strNumComments);
+      if(numComments <= 0) {
+          throw new Exception("Invalid number of comments.");
+      }
+    } catch (Exception e) { 
+      JSONObject errMessage = new JSONObject();
+      errMessage.put("message", "Invalid number of comments");
+      JSONObject err = new JSONObject();
+      err.put("error", errMessage);
+      response.getWriter().println(errMessage);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
 
-    ArrayList<String> comments = new ArrayList<>();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
+
+    ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results) {
-      comments.add((String) entity.getProperty("comment"));
+      long id = entity.getKey().getId();
+      String text = (String) entity.getProperty("comment");
+      comments.add(new Comment(id, text));
     }
 
     response.setContentType("text/html;");
@@ -57,21 +80,21 @@ public class DataServlet extends HttpServlet {
     long timestamp = System.currentTimeMillis();
 
     if (comment != null && !comment.isEmpty()){ 
-      Entity taskEntity = new Entity("Comment");
-      taskEntity.setProperty("comment", comment);
-      taskEntity.setProperty("timestamp", timestamp);
+      Entity commentsEntity = new Entity("Comment");
+      commentsEntity.setProperty("comment", comment);
+      commentsEntity.setProperty("timestamp", timestamp);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(taskEntity);
+      datastore.put(commentsEntity);
     }
-    response.sendRedirect("/#interests");
+    response.sendRedirect("/#comments");
   }
 
   /**
    * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
    * the Gson library dependency to pom.xml.
    */
-  private String convertToJson(ArrayList<String> comments) {
+  private String convertToJson(ArrayList<Comment> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
