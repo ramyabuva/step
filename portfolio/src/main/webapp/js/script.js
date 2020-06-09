@@ -62,6 +62,7 @@ async function getNumComments(numComments) {
 async function getText() {
   const numComments = document.getElementById('number-comments');
   getNumComments(numComments.options[numComments.selectedIndex].value);
+  createMap();
 }
 
 /** Creates an <li> element containing text.
@@ -95,4 +96,15 @@ function deleteComment(message) {
   const params = new URLSearchParams();
   params.append('id', message.id);
   fetch('/delete-comment', {method: 'POST', body: params});
+}
+
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  const mapUVA = new google.maps.Map(
+      document.getElementById('mapUVA'),
+      {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
+  const mapRR = new google.maps.Map(
+      document.getElementById('mapRR'),
+      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
 }
