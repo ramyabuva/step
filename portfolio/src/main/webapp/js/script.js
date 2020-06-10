@@ -11,18 +11,43 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+var mode = false;
+
+/**
+ * Sets Light mode of page based on cookies
+ */
+function setMode() { 
+  var value = getCookie('mode');
+  if(value=="dark"){
+    switchSheet('css/nightmode.css');
+    switchIcon('fas fa-sun');
+    mode = true;
+  }else {
+    switchSheet('');
+    switchIcon('fas fa-moon');
+    mode = false;
+    }
+}
+
+/**
+ * @param {string} The string whose value you want to get from the cookie. 
+ */
+function getCookie(name) { 
+  var re = new RegExp(name + "=([^;]+)");
+  var value = re.exec(document.cookie);
+  return (value != null) ? unescape(value[1]) : null;
+}
+
 /**
  * Switches Light Mode of Page
  */
 function switchMode() {
-  var style = document.getElementById('pagestyle').getAttribute('href');
-  if (style == '') { 
-    switchSheet('css/nightmode.css');
-    switchIcon('fas fa-sun');
+  if (!mode) { 
+    document.cookie = "mode=dark";
   } else { 
-    switchSheet('');
-    switchIcon('fas fa-moon');
+    document.cookie = "mode=light";
   }
+  setMode();
   createMap();
 }
 
@@ -96,12 +121,12 @@ function deleteComment(message) {
   const params = new URLSearchParams();
   params.append('id', message.id);
   fetch('/delete-comment', {method: 'POST', body: params});
+  getText();
 }
 
 
 /** Creates a map and adds it to the page. */
 function createMap() {
-  var style = document.getElementById('pagestyle').getAttribute('href');
   const nightmode = [
       {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
       {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
@@ -186,7 +211,7 @@ function createMap() {
   // set style of map according to mode
   var mapUVA;
   var mapRR;
-  if (style == '') { 
+  if (!mode) { 
     mapUVA = new google.maps.Map(
         document.getElementById('mapUVA'),
         {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
