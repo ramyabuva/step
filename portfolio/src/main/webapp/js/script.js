@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 /**
  * Switches Light Mode of Page
  */
@@ -24,6 +23,7 @@ function switchMode() {
     switchSheet('');
     switchIcon('fas fa-moon');
   }
+  createMap();
 }
 
 /**
@@ -101,15 +101,113 @@ function deleteComment(message) {
 
 /** Creates a map and adds it to the page. */
 function createMap() {
-  const mapUVA = new google.maps.Map(
-      document.getElementById('mapUVA'),
-      {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
-  const markerUVA = new google.maps.Marker({
+  var style = document.getElementById('pagestyle').getAttribute('href');
+  const nightmode = [
+      {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+      {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+      {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+      {
+        featureType: 'administrative.locality',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#d59563'}]
+      },
+      {
+        featureType: 'poi',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#d59563'}]
+      },
+      {
+        featureType: 'poi.park',
+        elementType: 'geometry',
+        stylers: [{color: '#263c3f'}]
+      },
+      {
+        featureType: 'poi.park',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#6b9a76'}]
+      },
+      {
+        featureType: 'road',
+        elementType: 'geometry',
+        stylers: [{color: '#38414e'}]
+      },
+      {
+        featureType: 'road',
+        elementType: 'geometry.stroke',
+        stylers: [{color: '#212a37'}]
+      },
+      {
+        featureType: 'road',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#9ca5b3'}]
+      },
+      {
+        featureType: 'road.highway',
+        elementType: 'geometry',
+        stylers: [{color: '#746855'}]
+      },
+      {
+        featureType: 'road.highway',
+        elementType: 'geometry.stroke',
+        stylers: [{color: '#1f2835'}]
+      },
+      {
+        featureType: 'road.highway',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#f3d19c'}]
+      },
+      {
+        featureType: 'transit',
+        elementType: 'geometry',
+        stylers: [{color: '#2f3948'}]
+      },
+      {
+        featureType: 'transit.station',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#d59563'}]
+      },
+      {
+        featureType: 'water',
+        elementType: 'geometry',
+        stylers: [{color: '#17263c'}]
+      },
+      {
+        featureType: 'water',
+        elementType: 'labels.text.fill',
+        stylers: [{color: '#515c6d'}]
+      },
+      {
+        featureType: 'water',
+        elementType: 'labels.text.stroke',
+        stylers: [{color: '#17263c'}]
+      }
+    ]
+
+  // set style of map according to mode
+  var mapUVA;
+  var mapRR;
+  if (style == '') { 
+    mapUVA = new google.maps.Map(
+        document.getElementById('mapUVA'),
+        {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
+    mapRR = new google.maps.Map(
+      document.getElementById('mapRR'),
+      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
+  } else {
+    mapUVA = new google.maps.Map(
+        document.getElementById('mapUVA'),
+        {center: {lat: 38.035546, lng: -78.503425}, zoom: 16, styles: nightmode});
+    mapRR = new google.maps.Map(
+      document.getElementById('mapRR'),
+      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16, styles: nightmode});
+  }
+
+  var markerUVA = new google.maps.Marker({
     position: {lat: 38.035546, lng: -78.503425},
     map: mapUVA,
     title: 'University of Virginia'
   });
-  const UVAInfoWindow =
+  var UVAInfoWindow =
       new google.maps.InfoWindow({content: 'This is the Rotunda, the primary symbol of the university'});
   markerUVA.addListener('click', function() {
     mapUVA.setZoom(20);
@@ -117,10 +215,7 @@ function createMap() {
     UVAInfoWindow.open(mapUVA, markerUVA);
   });
 
-  const mapRR = new google.maps.Map(
-      document.getElementById('mapRR'),
-      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
-  const markerRR = new google.maps.Marker({
+  var markerRR = new google.maps.Marker({
     position: {lat: 38.977849, lng: -77.499964},
     map: mapRR,
     title: 'Rock Ridge High School'
