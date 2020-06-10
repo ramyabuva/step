@@ -104,7 +104,29 @@ function createMap() {
   const mapUVA = new google.maps.Map(
       document.getElementById('mapUVA'),
       {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
+  const markerUVA = new google.maps.Marker({
+    position: {lat: 38.035546, lng: -78.503425},
+    map: mapUVA,
+    title: 'University of Virginia'
+  });
+  const UVAInfoWindow =
+      new google.maps.InfoWindow({content: 'This is the Rotunda, the primary symbol of the university'});
+  markerUVA.addListener('click', function() {
+    mapUVA.setZoom(20);
+    mapUVA.setCenter(markerUVA.getPosition());
+    UVAInfoWindow.open(mapUVA, markerUVA);
+  });
+
   const mapRR = new google.maps.Map(
       document.getElementById('mapRR'),
       {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
+  const markerRR = new google.maps.Marker({
+    position: {lat: 38.977849, lng: -77.499964},
+    map: mapRR,
+    title: 'Rock Ridge High School'
+  });
+  markerRR.addListener('click', function() {
+    mapRR.setZoom(20);
+    mapRR.setCenter(markerRR.getPosition());
+  });
 }
