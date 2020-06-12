@@ -10133,3 +10133,13 @@ section.resume-section .resume-section-content {
     padding-bottom: 5rem;
   }
 }
+
+#map-uva {
+  width: 50%; 
+  height: 200px;
+}
+
+#map-rr {
+  width: 50%; 
+  height: 200px;
+}

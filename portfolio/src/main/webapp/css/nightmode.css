@@ -22,3 +22,13 @@
   background-color: #fff;
   color: #343a40;
 }
+
+.info-window-text { 
+  color: #2f353a; 
+}
+
+.list-group-item { 
+  background-color: #2f353a;
+  border-color: #fff;
+  color: #fff
+}
