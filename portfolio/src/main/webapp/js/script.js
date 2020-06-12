@@ -17,24 +17,24 @@ var mode = false;
  * Sets Light mode of page based on cookies
  */
 function setMode() { 
-  var value = getCookie('mode');
-  if(value=="dark"){
+  const value = getCookie('mode');
+  if (value == 'dark') {
     switchSheet('css/nightmode.css');
     switchIcon('fas fa-sun');
     mode = true;
-  }else {
+  } else {
     switchSheet('');
     switchIcon('fas fa-moon');
     mode = false;
-    }
+  }
 }
 
 /**
  * @param {string} The string whose value you want to get from the cookie. 
  */
 function getCookie(name) { 
-  var re = new RegExp(name + "=([^;]+)");
-  var value = re.exec(document.cookie);
+  const re = new RegExp(name + '=([^;]+)');
+  const value = re.exec(document.cookie);
   return (value != null) ? unescape(value[1]) : null;
 }
 
@@ -42,10 +42,10 @@ function getCookie(name) {
  * Switches Light Mode of Page
  */
 function switchMode() {
-  if (!mode) { 
-    document.cookie = "mode=dark";
-  } else { 
+  if (mode) { 
     document.cookie = "mode=light";
+  } else { 
+    document.cookie = "mode=dark";
   }
   setMode();
   createMap();
@@ -85,6 +85,7 @@ async function getNumComments(numComments) {
  * Display text from data Servlet
  */
 async function getText() {
+  setMode();
   const numComments = document.getElementById('number-comments');
   getNumComments(numComments.options[numComments.selectedIndex].value);
   createMap();
@@ -128,125 +129,125 @@ function deleteComment(message) {
 /** Creates a map and adds it to the page. */
 function createMap() {
   const nightmode = [
-      {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-      {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
-      {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
-      {
-        featureType: 'administrative.locality',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#d59563'}]
-      },
-      {
-        featureType: 'poi',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#d59563'}]
-      },
-      {
-        featureType: 'poi.park',
-        elementType: 'geometry',
-        stylers: [{color: '#263c3f'}]
-      },
-      {
-        featureType: 'poi.park',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#6b9a76'}]
-      },
-      {
-        featureType: 'road',
-        elementType: 'geometry',
-        stylers: [{color: '#38414e'}]
-      },
-      {
-        featureType: 'road',
-        elementType: 'geometry.stroke',
-        stylers: [{color: '#212a37'}]
-      },
-      {
-        featureType: 'road',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#9ca5b3'}]
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'geometry',
-        stylers: [{color: '#746855'}]
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'geometry.stroke',
-        stylers: [{color: '#1f2835'}]
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#f3d19c'}]
-      },
-      {
-        featureType: 'transit',
-        elementType: 'geometry',
-        stylers: [{color: '#2f3948'}]
-      },
-      {
-        featureType: 'transit.station',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#d59563'}]
-      },
-      {
-        featureType: 'water',
-        elementType: 'geometry',
-        stylers: [{color: '#17263c'}]
-      },
-      {
-        featureType: 'water',
-        elementType: 'labels.text.fill',
-        stylers: [{color: '#515c6d'}]
-      },
-      {
-        featureType: 'water',
-        elementType: 'labels.text.stroke',
-        stylers: [{color: '#17263c'}]
-      }
-    ]
+    {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+    {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+    {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+    {
+      featureType: 'administrative.locality',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#d59563'}]
+    },
+    {
+      featureType: 'poi',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#d59563'}]
+    },
+    {
+      featureType: 'poi.park',
+      elementType: 'geometry',
+      stylers: [{color: '#263c3f'}]
+    },
+    {
+      featureType: 'poi.park',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#6b9a76'}]
+    },
+    {
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [{color: '#38414e'}]
+    },
+    {
+      featureType: 'road',
+      elementType: 'geometry.stroke',
+      stylers: [{color: '#212a37'}]
+    },
+    {
+      featureType: 'road',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#9ca5b3'}]
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'geometry',
+      stylers: [{color: '#746855'}]
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'geometry.stroke',
+      stylers: [{color: '#1f2835'}]
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#f3d19c'}]
+    },
+    {
+      featureType: 'transit',
+      elementType: 'geometry',
+      stylers: [{color: '#2f3948'}]
+    },
+    {
+      featureType: 'transit.station',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#d59563'}]
+    },
+    {
+      featureType: 'water',
+      elementType: 'geometry',
+      stylers: [{color: '#17263c'}]
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#515c6d'}]
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.stroke',
+      stylers: [{color: '#17263c'}]
+    }
+  ]
 
   // set style of map according to mode
-  var mapUVA;
-  var mapRR;
-  if (!mode) { 
-    mapUVA = new google.maps.Map(
-        document.getElementById('mapUVA'),
-        {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
-    mapRR = new google.maps.Map(
-      document.getElementById('mapRR'),
-      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
-  } else {
-    mapUVA = new google.maps.Map(
-        document.getElementById('mapUVA'),
+  let mapUniversity;
+  let mapHighSchool;
+  if (mode) { 
+    mapUniversity = new google.maps.Map(
+        document.getElementById('map-uva'),
         {center: {lat: 38.035546, lng: -78.503425}, zoom: 16, styles: nightmode});
-    mapRR = new google.maps.Map(
-      document.getElementById('mapRR'),
+    mapHighSchool = new google.maps.Map(
+      document.getElementById('map-rr'),
       {center: {lat: 38.977849, lng: -77.499964}, zoom: 16, styles: nightmode});
+  } else {
+    mapUniversity = new google.maps.Map(
+        document.getElementById('map-uva'),
+        {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
+    mapHighSchool = new google.maps.Map(
+      document.getElementById('map-rr'),
+      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
   }
 
-  var markerUVA = new google.maps.Marker({
+  let markerUniversity = new google.maps.Marker({
     position: {lat: 38.035546, lng: -78.503425},
-    map: mapUVA,
+    map: mapUniversity,
     title: 'University of Virginia'
   });
-  var UVAInfoWindow =
+  const universityInfoWindow =
       new google.maps.InfoWindow({content: 'This is the Rotunda, the primary symbol of the university'});
-  markerUVA.addListener('click', function() {
-    mapUVA.setZoom(20);
-    mapUVA.setCenter(markerUVA.getPosition());
-    UVAInfoWindow.open(mapUVA, markerUVA);
+  markerUniversity.addListener('click', function() {
+    mapUniversity.setZoom(20);
+    mapUniversity.setCenter(markerUniversity.getPosition());
+    universityInfoWindow.open(mapUniversity, markerUniversity);
   });
 
-  var markerRR = new google.maps.Marker({
+  let markerHighSchool = new google.maps.Marker({
     position: {lat: 38.977849, lng: -77.499964},
-    map: mapRR,
+    map: mapHighSchool,
     title: 'Rock Ridge High School'
   });
-  markerRR.addListener('click', function() {
-    mapRR.setZoom(20);
-    mapRR.setCenter(markerRR.getPosition());
+  markerHighSchool.addListener('click', function() {
+    mapHighSchool.setZoom(20);
+    mapHighSchool.setCenter(markerHighSchool.getPosition());
   });
 }
