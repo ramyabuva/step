@@ -11,19 +11,44 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+var mode = false;
+
+/**
+ * Sets Light mode of page based on cookies
+ */
+function setMode() { 
+  const value = getCookie('mode');
+  if (value == 'dark') {
+    switchSheet('css/nightmode.css');
+    switchIcon('fas fa-sun');
+    mode = true;
+  } else {
+    switchSheet('');
+    switchIcon('fas fa-moon');
+    mode = false;
+  }
+}
+
+/**
+ * @param {string} The string whose value you want to get from the cookie. 
+ */
+function getCookie(name) { 
+  const re = new RegExp(name + '=([^;]+)');
+  const value = re.exec(document.cookie);
+  return (value != null) ? unescape(value[1]) : null;
+}
 
 /**
  * Switches Light Mode of Page
  */
 function switchMode() {
-  var style = document.getElementById('pagestyle').getAttribute('href');
-  if (style == '') { 
-    switchSheet('css/nightmode.css');
-    switchIcon('fas fa-sun');
+  if (mode) { 
+    document.cookie = 'mode=light';
   } else { 
-    switchSheet('');
-    switchIcon('fas fa-moon');
+    document.cookie = 'mode=dark';
   }
+  setMode();
+  createMap();
 }
 
 /**
@@ -53,7 +78,7 @@ async function getNumComments(numComments) {
   messageContainer.innerHTML = '';
   document.getElementById('login').setAttribute('href', messages.url);
   if (JSON.parse(messages.loggedin)) { 
-    document.getElementById('login').innerHTML = "Logout";
+    document.getElementById('login').innerHTML = 'Logout';
     for (const message of JSON.parse(messages.comments)) { 
       if (messages.user == message.useremail) {
         messageContainer.appendChild(createListElement(message, true));
@@ -63,7 +88,7 @@ async function getNumComments(numComments) {
     }
   } else { 
     document.getElementById('comments-body').innerHTML = `To see and post comments, <a href=${messages.url}>login!</a>`;
-    document.getElementById('login').innerHTML = "Login";
+    document.getElementById('login').innerHTML = 'Login';
   }
 }
 
@@ -71,8 +96,10 @@ async function getNumComments(numComments) {
  * Display text from data Servlet
  */
 async function getText() {
+  setMode();
   const numComments = document.getElementById('number-comments');
   getNumComments(numComments.options[numComments.selectedIndex].value);
+  createMap();
 }
 
 /** Creates an <li> element containing text.
@@ -106,4 +133,132 @@ function deleteComment(message) {
   const params = new URLSearchParams();
   params.append('id', message.id);
   fetch('/delete-comment', {method: 'POST', body: params});
+  getText();
+}
+
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  const nightmode = [
+    {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+    {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+    {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+    {
+      featureType: 'administrative.locality',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#d59563'}]
+    },
+    {
+      featureType: 'poi',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#d59563'}]
+    },
+    {
+      featureType: 'poi.park',
+      elementType: 'geometry',
+      stylers: [{color: '#263c3f'}]
+    },
+    {
+      featureType: 'poi.park',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#6b9a76'}]
+    },
+    {
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [{color: '#38414e'}]
+    },
+    {
+      featureType: 'road',
+      elementType: 'geometry.stroke',
+      stylers: [{color: '#212a37'}]
+    },
+    {
+      featureType: 'road',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#9ca5b3'}]
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'geometry',
+      stylers: [{color: '#746855'}]
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'geometry.stroke',
+      stylers: [{color: '#1f2835'}]
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#f3d19c'}]
+    },
+    {
+      featureType: 'transit',
+      elementType: 'geometry',
+      stylers: [{color: '#2f3948'}]
+    },
+    {
+      featureType: 'transit.station',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#d59563'}]
+    },
+    {
+      featureType: 'water',
+      elementType: 'geometry',
+      stylers: [{color: '#17263c'}]
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#515c6d'}]
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.stroke',
+      stylers: [{color: '#17263c'}]
+    }
+  ]
+
+  // set style of map according to mode
+  let mapUniversity;
+  let mapHighSchool;
+  if (mode) { 
+    mapUniversity = new google.maps.Map(
+        document.getElementById('map-uva'),
+        {center: {lat: 38.035546, lng: -78.503425}, zoom: 16, styles: nightmode});
+    mapHighSchool = new google.maps.Map(
+      document.getElementById('map-rr'),
+      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16, styles: nightmode});
+  } else {
+    mapUniversity = new google.maps.Map(
+        document.getElementById('map-uva'),
+        {center: {lat: 38.035546, lng: -78.503425}, zoom: 16});
+    mapHighSchool = new google.maps.Map(
+      document.getElementById('map-rr'),
+      {center: {lat: 38.977849, lng: -77.499964}, zoom: 16});
+  }
+
+  let markerUniversity = new google.maps.Marker({
+    position: {lat: 38.035546, lng: -78.503425},
+    map: mapUniversity,
+    title: 'University of Virginia'
+  });
+  const universityInfoWindow =
+      new google.maps.InfoWindow({content: 'This is the Rotunda, the primary symbol of the university'});
+  markerUniversity.addListener('click', function() {
+    mapUniversity.setZoom(20);
+    mapUniversity.setCenter(markerUniversity.getPosition());
+    universityInfoWindow.open(mapUniversity, markerUniversity);
+  });
+
+  let markerHighSchool = new google.maps.Marker({
+    position: {lat: 38.977849, lng: -77.499964},
+    map: mapHighSchool,
+    title: 'Rock Ridge High School'
+  });
+  markerHighSchool.addListener('click', function() {
+    mapHighSchool.setZoom(20);
+    mapHighSchool.setCenter(markerHighSchool.getPosition());
+  });
 }

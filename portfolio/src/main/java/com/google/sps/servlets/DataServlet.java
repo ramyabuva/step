@@ -43,14 +43,15 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    JSONObject commentsJson = new JSONObject();
     if (userService.isUserLoggedIn()) {
       Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
       String strNumComments = request.getParameter("numComments");
       int numComments;
-      try{ 
+      try { 
         numComments = Integer.parseInt(strNumComments);
-        if(numComments <= 0) {
+        if (numComments <= 0) {
           throw new Exception("Invalid number of comments.");
         }
       } catch (Exception e) { 
@@ -74,21 +75,17 @@ public class DataServlet extends HttpServlet {
         comments.add(new Comment(id, text, user));
       }
       String logoutUrl = userService.createLogoutURL("/#comments");
-	  JSONObject commentsJson = new JSONObject();
       commentsJson.put("comments", convertToJson(comments));
       commentsJson.put("loggedin", true);
       commentsJson.put("user", userService.getCurrentUser().getEmail());
       commentsJson.put("url", logoutUrl);
-      response.setContentType("text/html;");
-      response.getWriter().println(commentsJson);
     } else {
-      JSONObject commentsJson = new JSONObject();
       commentsJson.put("loggedin", false);
       String loginUrl = userService.createLoginURL("/#comments");
       commentsJson.put("url", loginUrl);
-      response.setContentType("text/html;");
-      response.getWriter().println(commentsJson);
     }
+    response.setContentType("text/html;");
+    response.getWriter().println(commentsJson);
   }
 
   @Override
@@ -99,7 +96,7 @@ public class DataServlet extends HttpServlet {
       String comment = request.getParameter("text-input");
       long timestamp = System.currentTimeMillis();
 
-      if (comment != null && !comment.isEmpty()){ 
+      if (comment != null && !comment.isEmpty()) { 
         Entity commentsEntity = new Entity("Comment");
         commentsEntity.setProperty("comment", comment);
         commentsEntity.setProperty("timestamp", timestamp);
