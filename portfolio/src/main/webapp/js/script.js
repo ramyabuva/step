@@ -51,8 +51,19 @@ async function getNumComments(numComments) {
   const messages = await response.json();
   const messageContainer = document.getElementById('message-container');
   messageContainer.innerHTML = '';
-  for (const message of messages) { 
-    messageContainer.appendChild(createListElement(message));
+  document.getElementById('login').setAttribute('href', messages.url);
+  if (JSON.parse(messages.loggedin)) { 
+    document.getElementById('login').innerHTML = "Logout";
+    for (const message of JSON.parse(messages.comments)) { 
+      if (messages.user == message.useremail) {
+        messageContainer.appendChild(createListElement(message, true));
+      } else {
+        messageContainer.appendChild(createListElement(message, false));
+      }
+    }
+  } else { 
+    document.getElementById('comments-body').innerHTML = `To see and post comments, <a href=${messages.url}>login!</a>`;
+    document.getElementById('login').innerHTML = "Login";
   }
 }
 
@@ -66,24 +77,24 @@ async function getText() {
 
 /** Creates an <li> element containing text.
  * @param {Object} message A JSON object representing a single comment.
+ * @param {Boolean} deletable Whether user can delete comment or not.
  */
-function createListElement(message) {
+function createListElement(message, deletable) {
   const liElement = document.createElement('li');
-  liElement.className = 'message';
-  liElement.innerText = message.text;
+  liElement.innerHTML = `<b>${message.useremail}:  </b> ${message.text}`;
   liElement.setAttribute('class', 'list-group-item');
+  if (deletable) {
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
+    deleteButtonElement.setAttribute('class', 'social-icon float-right');
+    deleteButtonElement.addEventListener('click', () => {
+      deleteComment(message);
 
-  const deleteButtonElement = document.createElement('button');
-  deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
-  deleteButtonElement.setAttribute('class', 'social-icon float-right');
-  deleteButtonElement.addEventListener('click', () => {
-    deleteComment(message);
-
-    // Remove the comment from the DOM.
-    liElement.remove();
-  });
-
-  liElement.appendChild(deleteButtonElement);
+      // Remove the comment from the DOM.
+      liElement.remove();
+    });
+    liElement.appendChild(deleteButtonElement);
+  }
   return liElement;
 }
 

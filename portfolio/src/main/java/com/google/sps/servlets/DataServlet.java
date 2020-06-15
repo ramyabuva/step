@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -40,52 +42,72 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    UserService userService = UserServiceFactory.getUserService();
+    if (userService.isUserLoggedIn()) {
+      Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-    String strNumComments = request.getParameter("numComments");
-    int numComments;
-    try{ 
-      numComments = Integer.parseInt(strNumComments);
-      if(numComments <= 0) {
+      String strNumComments = request.getParameter("numComments");
+      int numComments;
+      try{ 
+        numComments = Integer.parseInt(strNumComments);
+        if(numComments <= 0) {
           throw new Exception("Invalid number of comments.");
+        }
+      } catch (Exception e) { 
+        JSONObject errMessage = new JSONObject();
+        errMessage.put("message", "Invalid number of comments");
+        JSONObject err = new JSONObject();
+        err.put("error", errMessage);
+        response.getWriter().println(errMessage);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
       }
-    } catch (Exception e) { 
-      JSONObject errMessage = new JSONObject();
-      errMessage.put("message", "Invalid number of comments");
-      JSONObject err = new JSONObject();
-      err.put("error", errMessage);
-      response.getWriter().println(errMessage);
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
+
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
+
+      ArrayList<Comment> comments = new ArrayList<>();
+      for (Entity entity : results) {
+        long id = entity.getKey().getId();
+        String text = (String) entity.getProperty("comment");
+        String user = (String) entity.getProperty("user");
+        comments.add(new Comment(id, text, user));
+      }
+      String logoutUrl = userService.createLogoutURL("/#comments");
+	  JSONObject commentsJson = new JSONObject();
+      commentsJson.put("comments", convertToJson(comments));
+      commentsJson.put("loggedin", true);
+      commentsJson.put("user", userService.getCurrentUser().getEmail());
+      commentsJson.put("url", logoutUrl);
+      response.setContentType("text/html;");
+      response.getWriter().println(commentsJson);
+    } else {
+      JSONObject commentsJson = new JSONObject();
+      commentsJson.put("loggedin", false);
+      String loginUrl = userService.createLoginURL("/#comments");
+      commentsJson.put("url", loginUrl);
+      response.setContentType("text/html;");
+      response.getWriter().println(commentsJson);
     }
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
-
-    ArrayList<Comment> comments = new ArrayList<>();
-    for (Entity entity : results) {
-      long id = entity.getKey().getId();
-      String text = (String) entity.getProperty("comment");
-      comments.add(new Comment(id, text));
-    }
-
-    response.setContentType("text/html;");
-    response.getWriter().println(convertToJson(comments));
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get the input from the form.
-    String comment = request.getParameter("text-input");
-    long timestamp = System.currentTimeMillis();
+    UserService userService = UserServiceFactory.getUserService();
+    if (userService.isUserLoggedIn()) {
+      // Get the input from the form.
+      String comment = request.getParameter("text-input");
+      long timestamp = System.currentTimeMillis();
 
-    if (comment != null && !comment.isEmpty()){ 
-      Entity commentsEntity = new Entity("Comment");
-      commentsEntity.setProperty("comment", comment);
-      commentsEntity.setProperty("timestamp", timestamp);
+      if (comment != null && !comment.isEmpty()){ 
+        Entity commentsEntity = new Entity("Comment");
+        commentsEntity.setProperty("comment", comment);
+        commentsEntity.setProperty("timestamp", timestamp);
+        commentsEntity.setProperty("user", userService.getCurrentUser().getEmail());  
 
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(commentsEntity);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentsEntity);
+      }
     }
     response.sendRedirect("/#comments");
   }
