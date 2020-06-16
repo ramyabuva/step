@@ -19,9 +19,11 @@ public final class Comment {
 
   private final long id;
   private final String text;
+  private final String userEmail;
 
-  public Comment(long id, String text) {
+  public Comment(long id, String text, String userEmail) {
     this.id = id;
     this.text = text;
+    this.userEmail = userEmail;
   }
 }

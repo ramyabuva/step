@@ -43,9 +43,9 @@ function getCookie(name) {
  */
 function switchMode() {
   if (mode) { 
-    document.cookie = "mode=light";
+    document.cookie = 'mode=light';
   } else { 
-    document.cookie = "mode=dark";
+    document.cookie = 'mode=dark';
   }
   setMode();
   createMap();
@@ -76,8 +76,19 @@ async function getNumComments(numComments) {
   const messages = await response.json();
   const messageContainer = document.getElementById('message-container');
   messageContainer.innerHTML = '';
-  for (const message of messages) { 
-    messageContainer.appendChild(createListElement(message));
+  document.getElementById('login').setAttribute('href', messages.url);
+  if (JSON.parse(messages.logged_in)) { 
+    document.getElementById('login').innerHTML = 'Logout';
+    for (const message of JSON.parse(messages.comments)) { 
+      messageContainer.appendChild(createListElement(message, /*deletable=*/messages.user == message.userEmail));
+    }
+  } else { 
+    document.getElementById('comments-body').innerHTML = '';
+    const loginLink = document.createElement('a');
+    loginLink.setAttribute('href', messages.url);
+    loginLink.innerText = 'To see and post comments, login!'
+    document.getElementById('comments-body').append(loginLink);
+    document.getElementById('login').innerHTML = 'Login';
   }
 }
 
@@ -93,24 +104,32 @@ async function getText() {
 
 /** Creates an <li> element containing text.
  * @param {Object} message A JSON object representing a single comment.
+ * @param {Boolean} deletable Whether user can delete comment or not.
  */
-function createListElement(message) {
+function createListElement(message, deletable) {
   const liElement = document.createElement('li');
-  liElement.className = 'message';
-  liElement.innerText = message.text;
   liElement.setAttribute('class', 'list-group-item');
 
-  const deleteButtonElement = document.createElement('button');
-  deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
-  deleteButtonElement.setAttribute('class', 'social-icon float-right');
-  deleteButtonElement.addEventListener('click', () => {
-    deleteComment(message);
+  const userEmail = document.createElement('b');
+  userEmail.innerText = `${message.userEmail}:`;
+  liElement.append(userEmail);
 
-    // Remove the comment from the DOM.
-    liElement.remove();
-  });
+  const messageText = document.createElement('p');
+  messageText.innerText = message.text;
+  liElement.append(messageText);
 
-  liElement.appendChild(deleteButtonElement);
+  if (deletable) {
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
+    deleteButtonElement.setAttribute('class', 'social-icon float-right');
+    deleteButtonElement.addEventListener('click', () => {
+      deleteComment(message);
+
+      // Remove the comment from the DOM.
+      liElement.remove();
+    });
+    liElement.appendChild(deleteButtonElement);
+  }
   return liElement;
 }
 

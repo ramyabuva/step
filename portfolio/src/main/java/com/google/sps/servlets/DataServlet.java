@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -40,25 +42,36 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    UserService userService = UserServiceFactory.getUserService();
+    JSONObject commentsJson = new JSONObject();
+    if (userService.isUserLoggedIn()) {
+      commentsJson = getLoggedInComments(request.getParameter("numComments"), userService);
+    } else {
+      commentsJson = getLoggedOutComments(userService);
+    }
+    if (commentsJson.get("error") != null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+    response.setContentType("text/html;");
+    response.getWriter().println(commentsJson);
+  }
 
-    String strNumComments = request.getParameter("numComments");
+  public JSONObject getLoggedInComments(String strNumComments, UserService userService) {
     int numComments;
-    try{ 
+    try { 
       numComments = Integer.parseInt(strNumComments);
-      if(numComments <= 0) {
-          throw new Exception("Invalid number of comments.");
+      if (numComments <= 0) {
+        throw new Exception("Invalid number of comments.");
       }
     } catch (Exception e) { 
       JSONObject errMessage = new JSONObject();
       errMessage.put("message", "Invalid number of comments");
       JSONObject err = new JSONObject();
       err.put("error", errMessage);
-      response.getWriter().println(errMessage);
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
+      return err;
     }
 
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
 
@@ -66,26 +79,44 @@ public class DataServlet extends HttpServlet {
     for (Entity entity : results) {
       long id = entity.getKey().getId();
       String text = (String) entity.getProperty("comment");
-      comments.add(new Comment(id, text));
+      String user = (String) entity.getProperty("user");
+      comments.add(new Comment(id, text, user));
     }
+    JSONObject commentsJson = new JSONObject();
+    commentsJson.put("comments", convertToJson(comments));
+    commentsJson.put("logged_in", true);
+    commentsJson.put("user", userService.getCurrentUser().getEmail());
+    commentsJson.put("url", userService.createLogoutURL("/#comments"));
+    return commentsJson;
+  }
 
-    response.setContentType("text/html;");
-    response.getWriter().println(convertToJson(comments));
+  public JSONObject getLoggedOutComments(UserService userService) { 
+    JSONObject commentsJson = new JSONObject();
+    JSONObject errMessage = new JSONObject();
+    errMessage.put("message", "User is not logged in");
+    commentsJson.put("error", errMessage);
+    commentsJson.put("logged_in", false);
+    commentsJson.put("url", userService.createLoginURL("/#comments"));
+    return commentsJson;
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get the input from the form.
-    String comment = request.getParameter("text-input");
-    long timestamp = System.currentTimeMillis();
+    UserService userService = UserServiceFactory.getUserService();
+    if (userService.isUserLoggedIn()) {
+      // Get the input from the form.
+      String comment = request.getParameter("text-input");
+      long timestamp = System.currentTimeMillis();
 
-    if (comment != null && !comment.isEmpty()){ 
-      Entity commentsEntity = new Entity("Comment");
-      commentsEntity.setProperty("comment", comment);
-      commentsEntity.setProperty("timestamp", timestamp);
+      if (comment != null && !comment.isEmpty()) { 
+        Entity commentsEntity = new Entity("Comment");
+        commentsEntity.setProperty("comment", comment);
+        commentsEntity.setProperty("timestamp", timestamp);
+        commentsEntity.setProperty("user", userService.getCurrentUser().getEmail());  
 
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(commentsEntity);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentsEntity);
+      }
     }
     response.sendRedirect("/#comments");
   }

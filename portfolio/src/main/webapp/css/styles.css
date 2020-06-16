@@ -10143,3 +10143,14 @@ section.resume-section .resume-section-content {
   width: 50%; 
   height: 200px;
 }
+
+#login {
+  color: #ddab98;
+  font-weight: 800;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase; 
+}
+
+#login:hover {
+  color: #fff;
+}
