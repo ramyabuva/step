@@ -45,47 +45,59 @@ public class DataServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     JSONObject commentsJson = new JSONObject();
     if (userService.isUserLoggedIn()) {
-      Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-
-      String strNumComments = request.getParameter("numComments");
-      int numComments;
-      try { 
-        numComments = Integer.parseInt(strNumComments);
-        if (numComments <= 0) {
-          throw new Exception("Invalid number of comments.");
-        }
-      } catch (Exception e) { 
-        JSONObject errMessage = new JSONObject();
-        errMessage.put("message", "Invalid number of comments");
-        JSONObject err = new JSONObject();
-        err.put("error", errMessage);
-        response.getWriter().println(errMessage);
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        return;
-      }
-
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
-
-      ArrayList<Comment> comments = new ArrayList<>();
-      for (Entity entity : results) {
-        long id = entity.getKey().getId();
-        String text = (String) entity.getProperty("comment");
-        String user = (String) entity.getProperty("user");
-        comments.add(new Comment(id, text, user));
-      }
-      String logoutUrl = userService.createLogoutURL("/#comments");
-      commentsJson.put("comments", convertToJson(comments));
-      commentsJson.put("loggedin", true);
-      commentsJson.put("user", userService.getCurrentUser().getEmail());
-      commentsJson.put("url", logoutUrl);
+      commentsJson = getLoggedInComments(request.getParameter("numComments"), userService);
     } else {
-      commentsJson.put("loggedin", false);
-      String loginUrl = userService.createLoginURL("/#comments");
-      commentsJson.put("url", loginUrl);
+      commentsJson = getLoggedOutComments(userService);
+    }
+    if (commentsJson.get("error") != null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
     response.setContentType("text/html;");
     response.getWriter().println(commentsJson);
+  }
+
+  public JSONObject getLoggedInComments(String strNumComments, UserService userService) {
+    int numComments;
+    try { 
+      numComments = Integer.parseInt(strNumComments);
+      if (numComments <= 0) {
+        throw new Exception("Invalid number of comments.");
+      }
+    } catch (Exception e) { 
+      JSONObject errMessage = new JSONObject();
+      errMessage.put("message", "Invalid number of comments");
+      JSONObject err = new JSONObject();
+      err.put("error", errMessage);
+      return err;
+    }
+
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
+
+    ArrayList<Comment> comments = new ArrayList<>();
+    for (Entity entity : results) {
+      long id = entity.getKey().getId();
+      String text = (String) entity.getProperty("comment");
+      String user = (String) entity.getProperty("user");
+      comments.add(new Comment(id, text, user));
+    }
+    JSONObject commentsJson = new JSONObject();
+    commentsJson.put("comments", convertToJson(comments));
+    commentsJson.put("logged_in", true);
+    commentsJson.put("user", userService.getCurrentUser().getEmail());
+    commentsJson.put("url", userService.createLogoutURL("/#comments"));
+    return commentsJson;
+  }
+
+  public JSONObject getLoggedOutComments(UserService userService) { 
+    JSONObject commentsJson = new JSONObject();
+    JSONObject errMessage = new JSONObject();
+    errMessage.put("message", "User is not logged in");
+    commentsJson.put("error", errMessage);
+    commentsJson.put("logged_in", false);
+    commentsJson.put("url", userService.createLoginURL("/#comments"));
+    return commentsJson;
   }
 
   @Override

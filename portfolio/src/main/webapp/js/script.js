@@ -77,17 +77,17 @@ async function getNumComments(numComments) {
   const messageContainer = document.getElementById('message-container');
   messageContainer.innerHTML = '';
   document.getElementById('login').setAttribute('href', messages.url);
-  if (JSON.parse(messages.loggedin)) { 
+  if (JSON.parse(messages.logged_in)) { 
     document.getElementById('login').innerHTML = 'Logout';
     for (const message of JSON.parse(messages.comments)) { 
-      if (messages.user == message.useremail) {
-        messageContainer.appendChild(createListElement(message, true));
-      } else {
-        messageContainer.appendChild(createListElement(message, false));
-      }
+      messageContainer.appendChild(createListElement(message, /*deletable=*/messages.user == message.userEmail));
     }
   } else { 
-    document.getElementById('comments-body').innerHTML = `To see and post comments, <a href=${messages.url}>login!</a>`;
+    document.getElementById('comments-body').innerHTML = '';
+    const loginLink = document.createElement('a');
+    loginLink.setAttribute('href', messages.url);
+    loginLink.innerText = 'To see and post comments, login!'
+    document.getElementById('comments-body').append(loginLink);
     document.getElementById('login').innerHTML = 'Login';
   }
 }
@@ -108,8 +108,16 @@ async function getText() {
  */
 function createListElement(message, deletable) {
   const liElement = document.createElement('li');
-  liElement.innerHTML = `<b>${message.useremail}:  </b> ${message.text}`;
   liElement.setAttribute('class', 'list-group-item');
+
+  const userEmail = document.createElement('b');
+  userEmail.innerText = `${message.userEmail}:`;
+  liElement.append(userEmail);
+
+  const messageText = document.createElement('p');
+  messageText.innerText = message.text;
+  liElement.append(messageText);
+
   if (deletable) {
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerHTML = '<i class="fas fa-trash-alt" id="modeicon"></i>';
