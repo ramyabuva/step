@@ -58,10 +58,16 @@ public class DataServlet extends HttpServlet {
 
   public JSONObject getLoggedInComments(String strNumComments, UserService userService) {
     int numComments;
+    FetchOptions commentLimit;
     try { 
-      numComments = Integer.parseInt(strNumComments);
-      if (numComments <= 0) {
-        throw new Exception("Invalid number of comments.");
+      if (strNumComments.equals("all")) { 
+        commentLimit = FetchOptions.Builder.withDefaults();
+      } else { 
+        numComments = Integer.parseInt(strNumComments);
+        if (numComments <= 0) {
+          throw new Exception("Invalid number of comments.");
+        }
+        commentLimit = FetchOptions.Builder.withLimit(numComments);
       }
     } catch (Exception e) { 
       JSONObject errMessage = new JSONObject();
@@ -73,7 +79,7 @@ public class DataServlet extends HttpServlet {
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(numComments));
+    List<Entity> results = datastore.prepare(query).asList(commentLimit);
 
     ArrayList<Comment> comments = new ArrayList<>();
     for (Entity entity : results) {
