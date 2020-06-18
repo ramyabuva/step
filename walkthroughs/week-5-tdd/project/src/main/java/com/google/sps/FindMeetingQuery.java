@@ -23,20 +23,36 @@ import java.util.Set;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    ArrayList<TimeRange> eventTimes = new ArrayList<TimeRange>();
+    ArrayList<TimeRange> eventTimesOnlyMandatory = new ArrayList<TimeRange>();
+    ArrayList<TimeRange> eventTimesWithOptional = new ArrayList<TimeRange>();
     for (Event event : events) {
 	  Set<String> intersection = new HashSet<String>(request.getAttendees());
 	  intersection.retainAll(event.getAttendees());
-      if(intersection.size() > 0) {
-        eventTimes.add(event.getWhen());
+      if (intersection.size() > 0) {
+        eventTimesOnlyMandatory.add(event.getWhen());
+        eventTimesWithOptional.add(event.getWhen());
+      } else {
+        intersection = new HashSet<String>(request.getOptionalAttendees());
+        intersection.retainAll(event.getAttendees());
+        if(intersection.size() > 0) {
+          eventTimesWithOptional.add(event.getWhen());
+        }
       }
     }
+    Collection<TimeRange> options =  findFreeTimes(eventTimesWithOptional, request.getDuration());
+    if (options.size() > 0 || request.getAttendees().size() == 0 || request.getOptionalAttendees().size() == 0) {
+        return options;
+    }
+    return findFreeTimes(eventTimesOnlyMandatory, request.getDuration());
+  }
+
+  private Collection<TimeRange> findFreeTimes(ArrayList<TimeRange> eventTimes, long duration) {
     Collections.sort(eventTimes, TimeRange.ORDER_BY_START);
     int start = TimeRange.START_OF_DAY;
     ArrayList<TimeRange> options = new ArrayList<TimeRange>();
     for (TimeRange eventTime : eventTimes) { 
       if(eventTime.start() > start) {
-        if (eventTime.start() - start >= request.getDuration()){
+        if (eventTime.start() - start >= duration){
           options.add(TimeRange.fromStartEnd(start, eventTime.start(), false));
         }
         start = eventTime.end();
@@ -44,7 +60,7 @@ public final class FindMeetingQuery {
         start = eventTime.end();
       }
     }
-    if (TimeRange.END_OF_DAY - start >= request.getDuration()) {
+    if (TimeRange.END_OF_DAY - start >= duration) {
       options.add(TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true));
     }
     return options;
