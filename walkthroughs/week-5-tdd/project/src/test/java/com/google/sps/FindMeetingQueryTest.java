@@ -290,7 +290,7 @@ public final class FindMeetingQueryTest {
     // if they attend. 
     //
     // Events  : |--A--|     |----A----|
-    //                    |C|    
+    //                 |B|    
     // Day     : |---------------------|
     // Options :       |--1--|
 
